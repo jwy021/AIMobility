@@ -61,7 +61,7 @@ DEFAULT_CONFIG = {
     "xgb_n_estimators": 100, "xgb_max_depth": 6, "xgb_learning_rate": 0.1,
     "test_size": 0.2,
     "cnn_hidden_dim": 64, "cnn_num_layers": 2, "cnn_kernel_size": 3,
-    "cnn_epochs": 30, "cnn_batch_size": 16, "cnn_lr": 0.001,
+    "cnn_epochs": 10, "cnn_batch_size": 32, "cnn_lr": 0.0005,
     # Module 4
     "base_fare": 4800, "min_multiplier": 1.0, "max_multiplier": 3.0,
     "surge_coefficient": 0.4,

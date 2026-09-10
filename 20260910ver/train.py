@@ -16,6 +16,7 @@ import pandas as pd
 import joblib
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
 
 from config_loader import CFG
 
@@ -104,10 +105,15 @@ if __name__ == "__main__":
 
     num_features = X_train.shape[1]  # 피처 전체 사용
 
-    X_train_seq = torch.tensor(X_train, dtype=torch.float32).unsqueeze(1)
+    # 피처 스케일링 (모든 숫자의 단위를 평균 0, 표준편차 1로 맞춰서 진동 방지)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    X_train_seq = torch.tensor(X_train_scaled, dtype=torch.float32).unsqueeze(1)
     y_train_seq = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
 
-    X_test_seq = torch.tensor(X_test, dtype=torch.float32).unsqueeze(1)
+    X_test_seq = torch.tensor(X_test_scaled, dtype=torch.float32).unsqueeze(1)
     y_test_seq = torch.tensor(y_test, dtype=torch.float32).unsqueeze(1)
 
     train_loader = DataLoader(
@@ -147,7 +153,8 @@ if __name__ == "__main__":
     torch.save({
         'state_dict': dl_model.state_dict(),
         'input_dim': num_features,
-        'feature_cols': feature_cols
+        'feature_cols': feature_cols,
+        'scaler': scaler
     }, 'saved_models/cnn_lstm_demand.pt')
 
     print("\n[완료] 학습, 튜닝, 평가 및 모델 저장 완료!")
